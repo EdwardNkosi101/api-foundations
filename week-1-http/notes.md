@@ -31,3 +31,15 @@ Servers use headers like Authorization or Host to decide if a user has permissio
 A blank line separates headers from the body in HTTP, acting as a clear delimiter so parsers know exactly where instructions end and data begins
 
 # GIT workflow understood
+Why is POST not idempotent but PUT is?
+POST is not idempotent because each request represents an instruction to create a new resource, and the server assigns identity. Repeating the same POST represents a new creation request each time.
+PUT is idempotent because it defines the complete desired state of a known resource. Repeating it results in the same server state regardless of how many times it’s applied.
+
+Why must DELETE be idempotent even if the resource no longer exists?
+DELETE must be idempotent because the desired final state is “resource does not exist”. Whether the resource existed before the request or was already deleted, the resulting state is identical.
+
+Why is PATCH dangerous in distributed systems?
+PATCH is dangerous in distributed systems because partial updates depend on the current server state. If requests are retried or reordered, applying the same patch multiple times can produce different results, leading to data corruption or lost updates.
+
+Why should GET never return 201 Created?
+GET must never return 201 because it is a safe, read-only method. Returning 201 implies a resource was created as a side effect, which violates HTTP semantics, breaks caching, and destroys client assumptions.
